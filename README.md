@@ -37,6 +37,7 @@ the WebGPU shader format. On top of that graft:
 | Runtime platform | The HTML5 platform layer adapted to the 5.7 core (platform properties, file paths, crypto settings for encrypted paks). |
 | Frame rate | Bind group cache keyed by hash, redundant bind group and vertex/index buffer bindings skipped, multi-frame uniform buffers written in place, batched ring-buffer uploads, render-pass merging for the game canvas, frame pacing that does not wait for an extra animation frame. On our test project in Chrome (RTX 3080, Shipping): from about 26 to about 55 frames per second. |
 | Input | Pointer lock is requested only when the game hides the cursor (a visible cursor with `LockOnCapture` stayed usable); gamepads are polled only when one is connected. |
+| Audio | The Bink Audio decoder is built for WebAssembly from the engine's sources: sounds cooked as `BINKA` for another platform (for example containers made for a desktop build) play in the browser. HTML5 cooking still uses RAD Audio. |
 | Content delivery | Downloaded pak/IoStore blocks persist in the browser's Cache Storage, under a version written by UAT: a second visit reads them back without downloading them (157 MB read back, no request, on our test project). |
 | Diagnostics | Without a WebGPU adapter (for example with hardware acceleration turned off), the engine says so, including in Shipping, instead of exiting with code 1. |
 
@@ -138,7 +139,7 @@ call Engine\Build\BatchFiles\Build.bat UnrealEditor Win64 Development -WaitMutex
 rem The tools used by cooking and packaging
 call Engine\Build\BatchFiles\Build.bat -Target="ShaderCompileWorker Win64 Development" -Target="UnrealPak Win64 Development" -WaitMutex -MaxParallelActions=10
 
-rem The third-party libraries for WebAssembly (ICU, libpng, FreeType, HarfBuzz, Ogg, Vorbis, Opus, BLAKE3, ...)
+rem The third-party libraries for WebAssembly (ICU, libpng, FreeType, HarfBuzz, Ogg, Vorbis, Opus, BLAKE3, RAD Audio, Bink Audio, Oodle)
 "C:\Program Files\Git\bin\bash.exe" Engine/Platforms/HTML5/Build/BuildThirdParty.sh --jobs 10
 
 rem The shared browser executable for Blueprint-only projects
